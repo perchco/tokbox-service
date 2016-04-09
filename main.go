@@ -6,10 +6,10 @@ import (
 	"github.com/itsjamie/gin-cors"
 	"time"
 	"os"
+	"fmt"
 )
 
 func main() {
-	
 	//setup the api to use your credentials
 	tb := tokbox.New(os.Getenv("TOKBOX_API"),os.Getenv("TOKBOX_KEY"))
 
@@ -37,10 +37,16 @@ func main() {
 		session, err := tb.NewSession("", true) //no location, peer enabled
 
 		//create a token
-		token, err := session.token("publisher", "", 86400) //type publisher, no connection data, expire in 24 hours
+		token, err := session.Token("publisher", "", 86400) //type publisher, no connection data, expire in 24 hours
 
+		if err != nil{
+			fmt.Println(err)
+			c.JSON(200, gin.H{"not": "ok","token":""})
+		} else {
+			c.JSON(200, gin.H{"all": "ok","token":token})
+		}
 
-		c.JSON(200, gin.H{"all": "ok","token":token})
+		
 	})
 
 	
